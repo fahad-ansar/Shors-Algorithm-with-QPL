@@ -1,0 +1,109 @@
+gcd(x,y) {
+	while (y != 0) {
+		h = y;
+		y = x % y;
+		x = h
+	};
+	return x
+}
+power(x,y) {
+	res = 1;
+	while (y > 0) {
+		res = x * res;
+		y = y - 1
+	};
+	return res
+}
+powerMod(x,y,n) {
+	res = 1;
+	while (y > 0) {
+		res = x * res % n;
+		y = y - 1
+	};
+	return res
+}
+pick(n) {
+	res = 0;
+	pow = 1;
+	while (pow < n) {
+		res = res + 1;
+		pow = 2 * pow
+	};
+	return res
+}
+approxPeriod(nn,dn,n) {
+    hn1 = 1;
+    hn2 = 0;
+    kn1 = 0;
+    kn2 = 1;
+    while (dn != 0) {
+        an = nn/dn;
+        hn = an*hn1+hn2;
+        kn = an*kn1+kn2;
+        if (kn<n) {
+            h = dn;
+            dn = nn-an*dn;
+            nn = h;
+            hn2 = hn1;
+            hn1 = hn;
+            kn2 = kn1;
+            kn1 = kn
+        } else {
+            dn = 0
+        }
+    };
+    return kn1
+}        
+quantumPart(ta,tb,x,n,N) {
+    res = 0;
+    QInitialize(ta + tb);
+    QApply(W[ta],tb,ta + tb - 1);
+	QApply(CL[j,tb,ta + tb - 1,0,tb - 1,powerMod(x,j,n)],0,ta + tb - 1);
+	s = QMeasure(0,tb - 1);
+	QApply(INV[QFT[ta]],tb,ta + tb - 1);
+	s = QMeasure(tb,ta + tb - 1);
+	computed = approxPeriod(s,N,n);
+    candidate = computed;
+    iter = 0;
+    while (iter < 10) {
+        if (powerMod(x,candidate,n)==1) {
+            iter = 10;
+            res = candidate
+        } else {
+            iter = iter+1;
+            candidate = candidate + computed
+        }
+    };
+    return res
+}
+{
+    n = 15;
+	tb = pick(n);
+	ta = 2*tb;
+	N = power(2,ta);
+	r = 0;
+	while (r==0) {
+		x = random(1,n-1);
+        f1 = gcd(n,x);
+		if (f1==1) {
+			r = quantumPart(ta,tb,x,n,N);
+            if (r%2==1) {
+                r = 0
+            } else {
+                if (powerMod(x,r/2,n)==n-1) {
+                    r = 0
+                } else {
+                    skip
+                }
+            }
+		} else {
+			r = -1 
+		}
+	};
+    if (r > 0) {
+        f1 = gcd(power(x,r/2)-1,n)
+    } else {
+        skip
+    };
+	f2 = n / f1
+}
