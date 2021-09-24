@@ -7,9 +7,7 @@ Initial Idea was to have a language to implement and run Shor's Algorithm in cla
 
 ## How to run
 ### Prerequisite
-Java JRE
-### How to make changes to the QPL file
-Refer to Language guide and make changes to 'ShorQ.qpl' 
+Java JRE 
 ### Run
 go to ./src run Main.java 
 
